@@ -1,5 +1,7 @@
 package com.llmhub.llmhub.screens
 
+
+import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -7,6 +9,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +28,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -186,48 +190,48 @@ fun HomeScreen(
                     */
                     
                     // GitHub Stars
-                    val stars by preferences.githubStars.collectAsState(initial = 0)
-                    
-                    // Sync stars once
-                    LaunchedEffect(Unit) {
-                        GithubRepository.refreshStars(preferences)
-                    }
-
-                    if (stars > 0) {
-                        Surface(
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .clip(CircleShape)
-                                .clickable { uriHandler.openUri("https://github.com/timmyy123/LLM-Hub") }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                Icon(
-                                    imageVector = rememberGithubIcon(),
-                                    contentDescription = "GitHub Stars",
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "$stars",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                    }
+//                    val stars by preferences.githubStars.collectAsState(initial = 0)
+//
+//                    // Sync stars once
+//                    LaunchedEffect(Unit) {
+//                        GithubRepository.refreshStars(preferences)
+//                    }
+//
+//                    if (stars > 0) {
+//                        Surface(
+//                            shape = CircleShape,
+//                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+//                            modifier = Modifier
+//                                .padding(end = 8.dp)
+//                                .clip(CircleShape)
+//                                .clickable { uriHandler.openUri("https://github.com/timmyy123/LLM-Hub") }
+//                        ) {
+//                            Row(
+//                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+//                            ) {
+//                                Icon(
+//                                    imageVector = rememberGithubIcon(),
+//                                    contentDescription = "GitHub Stars",
+//                                    modifier = Modifier.size(16.dp),
+//                                    tint = MaterialTheme.colorScheme.onSurface
+//                                )
+//                                Icon(
+//                                    imageVector = Icons.Filled.Star,
+//                                    contentDescription = null,
+//                                    modifier = Modifier.size(16.dp),
+//                                    tint = MaterialTheme.colorScheme.onSurface
+//                                )
+//                                Text(
+//                                    text = "$stars",
+//                                    style = MaterialTheme.typography.labelMedium,
+//                                    fontWeight = FontWeight.Bold,
+//                                    color = MaterialTheme.colorScheme.onSurface
+//                                )
+//                            }
+//                        }
+//                    }
 
                     // Models Button
                     IconButton(onClick = onNavigateToModels) {
@@ -261,154 +265,124 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        BoxWithConstraints(
-            modifier = Modifier
+            LazyVerticalGrid (
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            val isLandscapeLayout = maxWidth > maxHeight
-            val isTabletLayout = minOf(maxWidth, maxHeight) >= 600.dp
-            val isPhoneLandscapeLayout = isLandscapeLayout && !isTabletLayout
-
-            val isTabletPortrait = isTabletLayout && !isLandscapeLayout
-            val isTabletLandscape = isTabletLayout && isLandscapeLayout
-
-            val horizontalPadding = when {
-                isPhoneLandscapeLayout -> 10.dp
-                isTabletLayout -> 24.dp
-                else -> 16.dp
-            }
-            val verticalPadding = when {
-                isPhoneLandscapeLayout -> 8.dp
-                isTabletLayout -> 20.dp
-                else -> 16.dp
-            }
-            val sectionSpacing = when {
-                isPhoneLandscapeLayout -> 8.dp
-                else -> 14.dp
-            }
-            val rowSpacing = when {
-                isPhoneLandscapeLayout -> 8.dp
-                else -> 12.dp
-            }
-
-            val heroHeight = when {
-                isPhoneLandscapeLayout -> 90.dp
-                isTabletPortrait -> 224.dp
-                isTabletLandscape -> 156.dp
-                else -> 190.dp
-            }
-
-            val toolsColumns = if (isLandscapeLayout) 4 else 2
-
-            val utilityColumns = when {
-                isLandscapeLayout -> 4
-                isTabletPortrait -> 3
-                maxWidth >= 430.dp -> 3
-                else -> 2
-            }
-
-            val featureCardHeight = when {
-                isPhoneLandscapeLayout -> 72.dp
-                isTabletPortrait -> 118.dp
-                isTabletLandscape -> 96.dp
-                else -> 108.dp
-            }
-
-            val compactCards = isPhoneLandscapeLayout
-            val sectionTitleStyle = if (isPhoneLandscapeLayout) {
-                MaterialTheme.typography.titleLarge
-            } else {
-                MaterialTheme.typography.headlineSmall
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = horizontalPadding, vertical = verticalPadding),
-                verticalArrangement = Arrangement.spacedBy(sectionSpacing)
+                .padding(paddingValues),
+                contentPadding = PaddingValues(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                item {
-                    HomeHeroCard(
-                        feature = aiChatFeature,
-                        cardHeight = heroHeight,
+                val isLandscapeLayout = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                val isTabletLayout = context.resources.configuration.smallestScreenWidthDp >= 600
+                val isPhoneLandscapeLayout = isLandscapeLayout && !isTabletLayout
+
+                val isTabletPortrait = isTabletLayout && !isLandscapeLayout
+                val isTabletLandscape = isTabletLayout && isLandscapeLayout
+
+                val featureCardHeight = when {
+                    isPhoneLandscapeLayout -> 72.dp
+                    isTabletPortrait -> 118.dp
+                    isTabletLandscape -> 96.dp
+                    else -> 108.dp
+                }
+
+                val compactCards = isPhoneLandscapeLayout
+                items (features) { feature ->
+                    SmallFeatureCard(
+                        feature = feature,
+                        cardHeight = featureCardHeight,
                         compact = compactCards,
-                        isLocked = !isPremium && aiChatFeature.route in PREMIUM_ROUTES,
+                        isLocked = false,
                         onClick = {
-                            val isLocked = !isPremium && aiChatFeature.route in PREMIUM_ROUTES
-                            if (isLocked) onNavigateToPremium() else onNavigateToFeature(aiChatFeature.route)
+                            if (false) onNavigateToPremium() else onNavigateToFeature(feature.route)
                         }
                     )
                 }
 
-                item {
-                    Text(
-                        text = stringResource(R.string.home_section_tools),
-                        style = sectionTitleStyle,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                item {
-                    Column(verticalArrangement = Arrangement.spacedBy(rowSpacing)) {
-                        toolsFeatures.chunked(toolsColumns).forEach { rowFeatures ->
-                            Row(horizontalArrangement = Arrangement.spacedBy(rowSpacing), modifier = Modifier.fillMaxWidth()) {
-                                rowFeatures.forEach { feature ->
-                                    val isLocked = !isPremium && feature.route in PREMIUM_ROUTES
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        SmallFeatureCard(
-                                            feature = feature,
-                                            cardHeight = featureCardHeight,
-                                            compact = compactCards,
-                                            isLocked = isLocked,
-                                            onClick = {
-                                                if (isLocked) onNavigateToPremium() else onNavigateToFeature(feature.route)
-                                            }
-                                        )
-                                    }
-                                }
-                                repeat((toolsColumns - rowFeatures.size).coerceAtLeast(0)) {
-                                    Spacer(modifier = Modifier.weight(1f))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    Text(
-                        text = stringResource(R.string.home_section_utilities),
-                        style = sectionTitleStyle,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                item {
-                    Column(verticalArrangement = Arrangement.spacedBy(rowSpacing)) {
-                        utilityFeatures.chunked(utilityColumns).forEach { rowFeatures ->
-                            Row(horizontalArrangement = Arrangement.spacedBy(rowSpacing), modifier = Modifier.fillMaxWidth()) {
-                                rowFeatures.forEach { feature ->
-                                    val isLocked = !isPremium && feature.route in PREMIUM_ROUTES
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        SmallFeatureCard(
-                                            feature = feature,
-                                            cardHeight = featureCardHeight,
-                                            compact = compactCards,
-                                            isLocked = isLocked,
-                                            onClick = {
-                                                if (isLocked) onNavigateToPremium() else onNavigateToFeature(feature.route)
-                                            }
-                                        )
-                                    }
-                                }
-                                repeat((utilityColumns - rowFeatures.size).coerceAtLeast(0)) {
-                                    Spacer(modifier = Modifier.weight(1f))
-                                }
-                            }
-                        }
-                    }
-                }
+//                item {
+//                    HomeHeroCard(
+//                        feature = aiChatFeature,
+//                        cardHeight = heroHeight,
+//                        compact = compactCards,
+//                        isLocked = !isPremium && aiChatFeature.route in PREMIUM_ROUTES,
+//                        onClick = {
+//                            val isLocked = !isPremium && aiChatFeature.route in PREMIUM_ROUTES
+//                            if (isLocked) onNavigateToPremium() else onNavigateToFeature(aiChatFeature.route)
+//                        }
+//                    )
+//                }
+//
+//                item {
+//                    Text(
+//                        text = stringResource(R.string.home_section_tools),
+//                        style = sectionTitleStyle,
+//                        fontWeight = FontWeight.Bold,
+//                        color = MaterialTheme.colorScheme.onSurface
+//                    )
+//                }
+//
+//                item {
+//                    Column(verticalArrangement = Arrangement.spacedBy(rowSpacing)) {
+//                        toolsFeatures.chunked(toolsColumns).forEach { rowFeatures ->
+//                            Row(horizontalArrangement = Arrangement.spacedBy(rowSpacing), modifier = Modifier.fillMaxWidth()) {
+//                                rowFeatures.forEach { feature ->
+//                                    val isLocked = !isPremium && feature.route in PREMIUM_ROUTES
+//                                    Box(modifier = Modifier.weight(1f)) {
+//                                        SmallFeatureCard(
+//                                            feature = feature,
+//                                            cardHeight = featureCardHeight,
+//                                            compact = compactCards,
+//                                            isLocked = isLocked,
+//                                            onClick = {
+//                                                if (isLocked) onNavigateToPremium() else onNavigateToFeature(feature.route)
+//                                            }
+//                                        )
+//                                    }
+//                                }
+//                                repeat((toolsColumns - rowFeatures.size).coerceAtLeast(0)) {
+//                                    Spacer(modifier = Modifier.weight(1f))
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                item {
+//                    Text(
+//                        text = stringResource(R.string.home_section_utilities),
+//                        style = sectionTitleStyle,
+//                        fontWeight = FontWeight.Bold,
+//                        color = MaterialTheme.colorScheme.onSurface
+//                    )
+//                }
+//
+//                item {
+//                    Column(verticalArrangement = Arrangement.spacedBy(rowSpacing)) {
+//                        utilityFeatures.chunked(utilityColumns).forEach { rowFeatures ->
+//                            Row(horizontalArrangement = Arrangement.spacedBy(rowSpacing), modifier = Modifier.fillMaxWidth()) {
+//                                rowFeatures.forEach { feature ->
+//                                    val isLocked = !isPremium && feature.route in PREMIUM_ROUTES
+//                                    Box(modifier = Modifier.weight(1f)) {
+//                                        SmallFeatureCard(
+//                                            feature = feature,
+//                                            cardHeight = featureCardHeight,
+//                                            compact = compactCards,
+//                                            isLocked = isLocked,
+//                                            onClick = {
+//                                                if (isLocked) onNavigateToPremium() else onNavigateToFeature(feature.route)
+//                                            }
+//                                        )
+//                                    }
+//                                }
+//                                repeat((utilityColumns - rowFeatures.size).coerceAtLeast(0)) {
+//                                    Spacer(modifier = Modifier.weight(1f))
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
 
                 if (!isPremium && !isLandscapeLayout) {
                     item {
@@ -419,7 +393,6 @@ fun HomeScreen(
                 item { Spacer(modifier = Modifier.height(6.dp)) }
             }
         }
-    }
 }
 
 @Composable
