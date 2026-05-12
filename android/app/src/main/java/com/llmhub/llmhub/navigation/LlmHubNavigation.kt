@@ -133,7 +133,7 @@ fun LlmHubNavigation(
                     navController.popBackStack()
                 },
                 onNavigateToChat = { chatId ->
-                    navController.navigate(Screen.Chat.createRoute(chatId))
+                    navController.navigate(Screen.Chat.createRoute(chatId))l
                 },
                 onCreateNewChat = {
                     navController.navigate(Screen.Chat.createRoute("new"))

@@ -39,6 +39,8 @@ import kotlinx.coroutines.withTimeoutOrNull
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.runtime.rememberCoroutineScope
 import android.net.Uri
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.composable
 import com.llmhub.llmhub.ads.ConsentManager
 import com.llmhub.llmhub.embedding.RagServiceManager
 import com.llmhub.llmhub.utils.FileUtils
@@ -46,6 +48,7 @@ import com.llmhub.llmhub.R
 import java.io.File
 import com.llmhub.llmhub.data.ThemeMode
 import com.llmhub.llmhub.data.localFileName
+import com.llmhub.llmhub.navigation.Screen
 import com.llmhub.llmhub.viewmodels.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -868,18 +871,18 @@ fun SettingsScreen(
                 }
             }
             
-            item {
-                SettingsSection(title = stringResource(R.string.source_code_section)) {
-                    SettingsItem(
-                        icon = Icons.Outlined.Code,
-                        title = stringResource(R.string.github_repository),
-                        subtitle = stringResource(R.string.view_source_contribute),
-                        onClick = {
-                            uriHandler.openUri("https://github.com/timmyy123/LLM-Hub")
-                        }
-                    )
-                }
-            }
+//            item {
+//                SettingsSection(title = stringResource(R.string.source_code_section)) {
+//                    SettingsItem(
+//                        icon = Icons.Outlined.Code,
+//                        title = stringResource(R.string.github_repository),
+//                        subtitle = stringResource(R.string.view_source_contribute),
+//                        onClick = {
+//                            uriHandler.openUri("https://github.com/timmyy123/LLM-Hub")
+//                        }
+//                    )
+//                }
+//            }
         }
     }
     
@@ -1446,4 +1449,21 @@ fun EditMemoryDialog(
             }
         }
     )
-} 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SettingScreenPreview() {
+        SettingsScreen(
+            onNavigateBack = {
+            },
+            onNavigateToModels = {
+            },
+            onNavigateToAbout = {
+            },
+            onNavigateToTerms = {
+            },
+            onNavigateToPremium = {
+            }
+        )
+}
